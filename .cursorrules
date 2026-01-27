@@ -1,0 +1,31 @@
+# SeatSense Project Rules
+
+## Technology Stack
+- Next.js 14 with App Router
+- TypeScript (strict mode)
+- Prisma ORM
+- Tailwind CSS
+- React Server Components (default)
+
+## Code Style
+- Use 'use client' only when necessary (forms, interactive components)
+- Prefer Server Actions over API routes
+- Use Server Components for data fetching
+- Always use TypeScript types (no `any`)
+
+## Database
+- Prisma for all database operations
+- Include relations in queries to avoid N+1
+- Use transactions for multi-step operations
+
+## Components
+- Server Components: Default for static content
+- Client Components: Forms, interactive elements only
+- Use Tailwind utility classes, avoid custom CSS
+- Components should be small and focused
+
+## Best Practices
+- No hardcoded values - use constants
+- Comment complex business logic
+- Handle errors gracefully with try/catch
+- Use revalidatePath after mutations

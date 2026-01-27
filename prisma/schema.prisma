@@ -1,0 +1,97 @@
+// Prisma schema for SeatSense
+// Privacy-first seat recommendation system
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+  // For PostgreSQL in production, change to:
+  // provider = "postgresql"
+}
+
+// Temporary booking session (expires after flight check-in)
+model Booking {
+  id              String            @id @default(uuid())
+  sessionId       String            @unique // For cookie-based session tracking
+  flightNumber    String
+  createdAt       DateTime          @default(now())
+  expiresAt       DateTime          // Auto-expire after 24 hours
+  preferences     Preferences?
+  seatAssignment  SeatAssignment?
+  
+  @@index([sessionId])
+  @@index([expiresAt])
+}
+
+// User preferences for SkyMatch (deleted after booking expires)
+model Preferences {
+  id                String   @id @default(uuid())
+  bookingId         String   @unique
+  booking           Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  // Relationship & Intent
+  relationshipStatus String  @default("single")        // "single" | "dating" | "married" | "complicated"
+  lookingFor         String  @default("friendship")    // "romance" | "friendship" | "networking" | "not_looking"
+  
+  // Age interested in (18-80 years)
+  interestedInAgeMin Int     @default(18)
+  interestedInAgeMax Int     @default(80)
+  
+  // Gender preference
+  interestedInGender String  @default("everyone")      // "men" | "women" | "everyone"
+  
+  // User's own info (for matching)
+  myAge              Int?                              // User's age
+  myGender           String  @default("prefer_not_say") // "man" | "woman" | "non_binary" | "prefer_not_say"
+  
+  // Vibe/Interests (comma-separated)
+  vibes              String  @default("")              // "adventurous,creative,intellectual,sporty,foodie,bookworm"
+  
+  // Social comfort
+  socialComfort      String  @default("open")          // "quiet" | "open" | "none"
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+// Flight seat inventory (mock data for demo)
+model Seat {
+  id              String          @id @default(uuid())
+  flightNumber    String
+  row             Int
+  column          String          // A, B, C, D, E, F
+  isAvailable     Boolean         @default(true)
+  isNearChild     Boolean         @default(false) // Discounted seats near children
+  isExitRow       Boolean         @default(false)
+  isWindow        Boolean         @default(false)
+  isAisle         Boolean         @default(false)
+  price           Float           @default(0) // Base price, discount if near child
+  
+  // Mock passenger data (for recommendation algorithm)
+  occupiedByAge          Int?     // Age of passenger in this seat (if occupied)
+  occupiedByGender       String?  // Gender of passenger (if occupied)
+  occupiedByRelationship String?  // Relationship status (if occupied)
+  occupiedByLookingFor   String?  // What they're looking for (if occupied)
+  occupiedByVibes        String?  // Their vibes (comma-separated)
+  
+  seatAssignments SeatAssignment[]
+  
+  @@unique([flightNumber, row, column])
+  @@index([flightNumber, isAvailable])
+}
+
+// Seat assignment for a booking
+model SeatAssignment {
+  id          String   @id @default(uuid())
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  seatId      String
+  seat        Seat     @relation(fields: [seatId], references: [id])
+  assignedAt  DateTime @default(now())
+  
+  @@index([bookingId])
+  @@index([seatId])
+}
