@@ -6,10 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  // Use PostgreSQL for production (Vercel)
+  // Use SQLite for local development
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-  // For PostgreSQL in production, change to:
-  // provider = "postgresql"
 }
 
 // Temporary booking session (expires after flight check-in)
