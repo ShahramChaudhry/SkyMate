@@ -7,8 +7,14 @@ import { BackButton } from '@/components/back-button'
 
 // Force dynamic rendering (requires database access)
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export default async function SeatMapPage() {
+  // Skip database call during build (no DATABASE_URL available)
+  if (!process.env.DATABASE_URL) {
+    return <div>Loading...</div>
+  }
+
   const { seats, recommended } = await getSeatRecommendations()
   const booking = await getBookingStatus()
 

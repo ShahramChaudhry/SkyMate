@@ -8,8 +8,14 @@ import { ConfirmButton } from '@/components/confirm-button'
 
 // Force dynamic rendering (requires database access)
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export default async function ConfirmationPage() {
+  // Skip database call during build (no DATABASE_URL available)
+  if (!process.env.DATABASE_URL) {
+    return <div>Loading...</div>
+  }
+
   const booking = await getBookingStatus()
 
   if (!booking || !booking.seatAssignment) {
