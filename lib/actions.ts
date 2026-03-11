@@ -206,6 +206,21 @@ export async function getBookingStatus() {
 }
 
 /**
+ * Clear preferences from current session
+ */
+export async function clearPreferences() {
+  const booking = await getExistingBooking()
+  
+  if (booking && booking.preferences) {
+    await prisma.preferences.delete({
+      where: { bookingId: booking.id }
+    })
+  }
+  
+  revalidatePath('/seat-map')
+}
+
+/**
  * Finalize booking confirmation
  */
 export async function confirmBooking() {

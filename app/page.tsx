@@ -1,8 +1,8 @@
 // Opt-in screen - Introduction to SeatSense feature
 // Users can choose to personalize their seating or skip to manual selection
 
-import Link from 'next/link'
 import { PlaneIcon } from '@/components/icons'
+import { HomeActions } from '@/components/home-actions'
 
 export default function OptInPage() {
   return (
@@ -48,18 +48,7 @@ export default function OptInPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-3">
-          <Link href="/preferences" className="block">
-            <button className="btn-primary">
-              I&apos;m interested ✨
-            </button>
-          </Link>
-          <Link href="/seat-map" className="block">
-            <button className="btn-secondary">
-              Just pick a seat, thanks
-            </button>
-          </Link>
-        </div>
+        <HomeActions />
 
         {/* Help Button */}
         <div className="flex justify-center">
