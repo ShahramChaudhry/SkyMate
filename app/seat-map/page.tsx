@@ -5,6 +5,9 @@ import { getSeatRecommendations, getBookingStatus } from '@/lib/actions'
 import { SeatMap } from '@/components/seat-map'
 import { BackButton } from '@/components/back-button'
 
+// Force dynamic rendering (requires database access)
+export const dynamic = 'force-dynamic'
+
 export default async function SeatMapPage() {
   const { seats, recommended } = await getSeatRecommendations()
   const booking = await getBookingStatus()

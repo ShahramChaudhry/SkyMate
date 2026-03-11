@@ -6,6 +6,9 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ConfirmButton } from '@/components/confirm-button'
 
+// Force dynamic rendering (requires database access)
+export const dynamic = 'force-dynamic'
+
 export default async function ConfirmationPage() {
   const booking = await getBookingStatus()
 
